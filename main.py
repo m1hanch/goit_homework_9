@@ -9,6 +9,11 @@ def sanitize_phone_number(phone):
             .replace(" ", "")
     )
     return new_phone
+def phone_validation(phone:str) -> bool:
+    if sanitize_phone_number(phone).isdigit() and (len(phone) == 10 or len(phone) == 12):
+        return True
+    else:
+        return False
 
 #функія для обрробки помилок
 def input_error(handler):
@@ -39,8 +44,7 @@ def handler(command: str, phone_book: dict):
         return 'Good bye!'
 
     # умова для add та change. Також перевірка правильного порядку введення
-    elif command[0] in ('add', 'change') and command[1].isalpha() and sanitize_phone_number(command[2]).isdigit()\
-            and (len(command[2]) == 10 or len(command[2]) == 12):
+    elif command[0] in ('add', 'change') and command[1].isalpha() and phone_validation(command[2]):
         phone_book.update({command[1]: sanitize_phone_number(command[2])})
         # Визначення правильної ввідповіді
         if command[0] == 'add':
@@ -49,8 +53,7 @@ def handler(command: str, phone_book: dict):
             return f'{command[1].capitalize()} changed!'
 
     # виклик помилки в разі неправильного формату команди
-    elif command[0] in ('add', 'change') and not (command[1].isalpha() and sanitize_phone_number(command[2]).isdigit()
-                                                  and (len(command[2]) == 10 or len(command[2]) == 12)):
+    elif command[0] in ('add', 'change') and not (command[1].isalpha() and phone_validation(command[2])):
         raise IndexError
     elif command[0] == 'phone' and (len(command) == 1 or not command[1].isalpha()):
         raise ValueError
